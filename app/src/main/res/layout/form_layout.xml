@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:context="ui.FormActivity"
+    android:layout_margin="32dp"
+    android:gravity="center"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+  <Spinner
+      android:layout_margin="16dp"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:id="@+id/dept"
+      android:entries="@array/dept"
+      />
+  <Spinner
+      android:layout_margin="16dp"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:id="@+id/year"
+      android:entries="@array/year"
+      />
+  <Spinner
+      android:layout_margin="16dp"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:id="@+id/section"
+      android:entries="@array/section"
+      />
+  <Spinner
+      android:layout_margin="16dp"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:id="@+id/day"
+      android:entries="@array/day"
+      />
+  <Spinner
+      android:layout_margin="16dp"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:id="@+id/hour"
+      android:entries="@array/hour"
+      />
+  <AutoCompleteTextView
+      android:layout_margin="16dp"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:inputType="text"
+      android:hint="Enter Faculty Name"
+      android:id="@+id/autocomplete_text_view"
+      />
+  <Button
+      android:layout_margin="16dp"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:textColor="@color/colorWhite"
+      android:text="Submit"
+      android:id="@+id/submit"
+      />
+
+
+
+</LinearLayout>
