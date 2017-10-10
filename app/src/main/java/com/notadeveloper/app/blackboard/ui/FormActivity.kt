@@ -16,11 +16,13 @@ import com.notadeveloper.app.blackboard.ui.adapters.classtimetable_adapter
 import com.notadeveloper.app.blackboard.ui.adapters.facultylist_adapter
 import com.notadeveloper.app.blackboard.ui.adapters.facultytimetable_adapter
 import com.notadeveloper.app.blackboard.util.RetrofitInterface
+import com.notadeveloper.app.blackboard.util.snack
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_form.form_lin
+import kotlinx.android.synthetic.main.activity_form.parent_layout
 import kotlinx.android.synthetic.main.activity_form.recycler_view
 import kotlinx.android.synthetic.main.form_layout.autocomplete_text_view
 import kotlinx.android.synthetic.main.form_layout.day
@@ -72,13 +74,14 @@ class FormActivity : AppCompatActivity() {
                   .subscribeOn(Schedulers.io())
                   .subscribe({ result ->
                     Log.e("eg", result.classTimetable.toString())
+                    parent_layout.snack(result.classId+" is at "+result.location)
                     val adapter = classtimetable_adapter(result.classTimetable)
                     recycler_view.layoutManager = LinearLayoutManager(this)
                     recycler_view.adapter = adapter
                     form_lin.visibility = View.GONE
                     recycler_view.visibility = View.VISIBLE
                   }, { error ->
-                    Toast.makeText(this, "No Data To Display", Toast.LENGTH_SHORT).show();
+                    parent_layout.snack("Requested Data not Stored In DB")
                     error.printStackTrace()
                   })
           )
@@ -104,7 +107,7 @@ class FormActivity : AppCompatActivity() {
                     form_lin.visibility = View.GONE
                     recycler_view.visibility = View.VISIBLE
                   }, { error ->
-                    Toast.makeText(this, "No Data To Display", Toast.LENGTH_SHORT).show();
+                    parent_layout.snack("Requested Data not Stored In DB")
                     error.printStackTrace()
                   })
           )
@@ -173,7 +176,7 @@ class FormActivity : AppCompatActivity() {
                       form_lin.visibility = View.GONE
                       recycler_view.visibility = View.VISIBLE
                     }, { error ->
-                      Toast.makeText(this, "No Data To Display", Toast.LENGTH_SHORT).show();
+                      parent_layout.snack("Requested Data not Stored In DB")
                       error.printStackTrace()
                     })
             )
