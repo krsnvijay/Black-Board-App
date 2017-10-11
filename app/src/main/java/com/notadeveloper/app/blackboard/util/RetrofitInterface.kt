@@ -37,7 +37,7 @@ interface RetrofitInterface {
           .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
           .addConverterFactory(MoshiConverterFactory.create().asLenient())
           .client(OkHttpClient.Builder().addNetworkInterceptor(StethoInterceptor()).build())
-          .baseUrl("http://192.168.1.2:8000/")
+          .baseUrl("https://blackboard-rest-api.herokuapp.com/")
           .build()
       return retrofit.create(RetrofitInterface::class.java)
       //        USAGE
