@@ -6,11 +6,12 @@ import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import com.notadeveloper.app.blackboard.R
-import com.notadeveloper.app.blackboard.models.*
+import com.notadeveloper.app.blackboard.models.CurrentFacultyList
+import com.notadeveloper.app.blackboard.models.CurrentFacultySchedule
+import com.notadeveloper.app.blackboard.models.FacultyList
+import com.notadeveloper.app.blackboard.models.FacultySchedule
 import com.notadeveloper.app.blackboard.ui.adapters.ExpandableListAdapter
-import com.notadeveloper.app.blackboard.ui.adapters.classtimetable_adapter
 import com.notadeveloper.app.blackboard.ui.adapters.facultylist_adapter
 import com.notadeveloper.app.blackboard.ui.adapters.facultytimetable_adapter
 import com.notadeveloper.app.blackboard.util.RetrofitInterface
@@ -19,7 +20,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
-import kotlinx.android.synthetic.main.activity_form.*
+import kotlinx.android.synthetic.main.activity_form.form_lin
+import kotlinx.android.synthetic.main.activity_form.lvExp
+import kotlinx.android.synthetic.main.activity_form.parent_layout
+import kotlinx.android.synthetic.main.activity_form.recycler_view
 import kotlinx.android.synthetic.main.form_layout.autocomplete_text_view
 import kotlinx.android.synthetic.main.form_layout.day
 import kotlinx.android.synthetic.main.form_layout.dept
@@ -32,9 +36,7 @@ import kotlin.properties.Delegates
 
 class FormActivity : AppCompatActivity() {
   private var realm: Realm by Delegates.notNull()
-    lateinit var listDataHeader: MutableList<String>
-    lateinit var listDataChild: HashMap<String, List<String>>
-    lateinit var listAdapter: ExpandableListAdapter
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_form)
@@ -74,11 +76,11 @@ class FormActivity : AppCompatActivity() {
                   .subscribeOn(Schedulers.io())
                   .subscribe({ result ->
                     Log.e("eg", result.classTimetable.toString())
-                      val mondaylist: MutableList<String> = ArrayList()
-                      val tuesdaylist: MutableList<String> = ArrayList()
-                      val wednesdaylist: MutableList<String> = ArrayList()
-                      val thursdaylist: MutableList<String> = ArrayList()
-                      val fridaylist: MutableList<String> = ArrayList()
+                    val mondaylist = ArrayList<String>()
+                    val tuesdaylist = ArrayList<String>()
+                    val wednesdaylist = ArrayList<String>()
+                    val thursdaylist = ArrayList<String>()
+                    val fridaylist = ArrayList<String>()
                       for (item in result.classTimetable)
                       {
                           val day1 = item.day
@@ -93,20 +95,22 @@ class FormActivity : AppCompatActivity() {
                           else if (day1.equals("Friday"))
                               fridaylist.add((item.hour).toInt()-1,item.subjCode)
                       }
+                    val listDataHeader = ArrayList<String>()
+                    val listDataChild = HashMap<String, List<String>>()
                       lvExp.visibility = View.VISIBLE
-                      listDataChild!!.put("Monday",mondaylist)
-                      listDataChild!!.put("Tuesday",mondaylist)
-                      listDataChild!!.put("Wednesday",mondaylist)
-                      listDataChild!!.put("Thursday",mondaylist)
-                      listDataChild!!.put("Friday",mondaylist)
-                      listDataHeader!!.add("Monday")
-                      listDataHeader!!.add("Tuesday")
-                      listDataHeader!!.add("Wednesday")
-                      listDataHeader!!.add("Thursday")
-                      listDataHeader!!.add("Friday")
+                    listDataChild.put("Monday", mondaylist)
+                    listDataChild.put("Tuesday", tuesdaylist)
+                    listDataChild.put("Wednesday", wednesdaylist)
+                    listDataChild.put("Thursday", thursdaylist)
+                    listDataChild.put("Friday", fridaylist)
+                    listDataHeader.add("Monday")
+                    listDataHeader.add("Tuesday")
+                    listDataHeader.add("Wednesday")
+                    listDataHeader.add("Thursday")
+                    listDataHeader.add("Friday")
                       Log.e("eg",listDataHeader.toString())
                       Log.e("dhg",listDataChild.toString())
-                      listAdapter = ExpandableListAdapter(this, listDataHeader, listDataChild)
+                    val listAdapter = ExpandableListAdapter(this, listDataHeader, listDataChild)
 
                       // setting list adapter
                       lvExp.setAdapter(listAdapter)
