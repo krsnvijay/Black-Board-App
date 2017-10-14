@@ -29,8 +29,8 @@ class facultylist_adapter(
 
   override fun onBindViewHolder(holder: viewholder, position: Int) {
     val faculty = list?.get(position)
-    holder.tv1.setText(faculty?.name + " "+ faculty?.facultyId)
-    holder.tv2.setText(faculty?.dept + " " + faculty?.phone)
+    holder.tv1.text = faculty?.name + " " + faculty?.facultyId
+    holder.tv2.text = faculty?.dept + " " + faculty?.phone
   }
 
   class viewholder(itemView: View) : RecyclerView.ViewHolder(itemView) {
