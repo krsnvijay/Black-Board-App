@@ -1,91 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_margin="32dp"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context="ui.FormActivity">
+    tools:context="ui.FormActivity"
+    >
 
-    <android.support.v7.widget.CardView
+  <android.support.v7.widget.CardView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      card_view:cardCornerRadius="3dp"
+      card_view:cardElevation="6dp"
+      >
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:orientation="vertical"
+        >
 
-        card_view:cardCornerRadius="3dp"
-        card_view:cardElevation="6dp">
+      <Spinner
+          android:id="@+id/dept"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="16dp"
+          android:layout_marginRight="16dp"
+          android:entries="@array/dept"
+          />
 
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+      <Spinner
+          android:id="@+id/year"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="16dp"
+          android:layout_marginRight="16dp"
+          android:layout_marginTop="16dp"
+          android:entries="@array/year"
+          />
 
-            <Spinner
-                android:id="@+id/dept"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginLeft="16dp"
-                android:entries="@array/dept" />
+      <Spinner
+          android:id="@+id/section"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="16dp"
+          android:layout_marginRight="16dp"
+          android:layout_marginTop="16dp"
+          android:layout_toRightOf="@+id/year"
+          android:entries="@array/section"
+          />
 
-            <Spinner
-                android:id="@+id/year"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:entries="@array/year"
-                android:layout_toRightOf="@+id/dept"/>
 
-            <Spinner
-                android:id="@+id/section"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
-                android:entries="@array/section"
-                android:layout_toRightOf="@+id/year"/>
-            <Button
-                android:id="@+id/submit1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginBottom="16dp"
-                android:layout_marginRight="16dp"
-                android:text="Submit"
-                android:textColor="@color/colorWhite"
-                android:layout_below="@+id/section"/>
-        </RelativeLayout>
-    </android.support.v7.widget.CardView>
+      <Spinner
+          android:id="@+id/day"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_below="@id/section"
+          android:layout_marginLeft="16dp"
+          android:layout_marginRight="16dp"
+          android:layout_marginTop="16dp"
+          android:entries="@array/day"
+          />
 
-    <Spinner
-        android:id="@+id/day"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:entries="@array/day" />
+      <Spinner
+          android:id="@+id/hour"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="16dp"
+          android:layout_marginRight="16dp"
+          android:layout_marginTop="16dp"
+          android:entries="@array/hour"
+          />
 
-    <Spinner
-        android:id="@+id/hour"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:entries="@array/hour" />
-
-    <AutoCompleteTextView
-        android:id="@+id/autocomplete_text_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:hint="Enter Faculty Name"
-        android:inputType="text" />
-
-    <Button
-        android:id="@+id/submit"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="Submit"
-        android:textColor="@color/colorWhite" />
+      <AutoCompleteTextView
+          android:id="@+id/autocomplete_text_view"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="16dp"
+          android:layout_marginRight="16dp"
+          android:layout_marginTop="16dp"
+          android:hint="Enter Faculty Name"
+          android:inputType="text"
+          />
+      <Button
+          android:id="@+id/submit"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_below="@+id/section"
+          android:layout_marginLeft="16dp"
+          android:layout_marginRight="16dp"
+          android:layout_marginTop="16dp"
+          android:text="Submit"
+          android:textColor="@color/colorWhite"
+          />
+    </LinearLayout>
+  </android.support.v7.widget.CardView>
 
 
 </LinearLayout>

@@ -24,7 +24,13 @@ import kotlinx.android.synthetic.main.activity_form.form_lin
 import kotlinx.android.synthetic.main.activity_form.lvExp
 import kotlinx.android.synthetic.main.activity_form.parent_layout
 import kotlinx.android.synthetic.main.activity_form.recycler_view
-import kotlinx.android.synthetic.main.form_layout.*
+import kotlinx.android.synthetic.main.form_layout.autocomplete_text_view
+import kotlinx.android.synthetic.main.form_layout.day
+import kotlinx.android.synthetic.main.form_layout.dept
+import kotlinx.android.synthetic.main.form_layout.hour
+import kotlinx.android.synthetic.main.form_layout.section
+import kotlinx.android.synthetic.main.form_layout.submit
+import kotlinx.android.synthetic.main.form_layout.year
 import kotlin.properties.Delegates
 
 
@@ -58,9 +64,8 @@ class FormActivity : AppCompatActivity() {
             getString(R.string.class_location), getString(R.string.class_timetable) -> {
                 day.visibility = View.GONE
                 hour.visibility = View.GONE
-                submit.visibility = View.GONE
                 autocomplete_text_view.visibility = View.GONE
-                submit1.setOnClickListener {
+              submit.setOnClickListener {
                     val class_id = dept.selectedItem.toString() + "-" + year.selectedItem.toString() + "-" + section.selectedItem.toString()
                     val compositeDisposable: CompositeDisposable = CompositeDisposable()
                     val apiService = RetrofitInterface.create()

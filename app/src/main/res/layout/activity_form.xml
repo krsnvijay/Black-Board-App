@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/parent_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    tools:context="ui.FormActivity"
     android:layout_margin="32dp"
     android:gravity="center"
-    android:id="@+id/parent_layout"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    tools:context="ui.FormActivity"
     >
   <include layout="@layout/form_layout"
       android:id="@+id/form_lin"
@@ -17,15 +17,16 @@
       />
 
   <android.support.v7.widget.RecyclerView
+      android:id="@+id/recycler_view"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:id="@+id/recycler_view"
       android:visibility="gone"
       />
   <ExpandableListView
       android:id="@+id/lvExp"
-      android:layout_height="match_parent"
       android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_marginTop="16dp"
       android:visibility="gone"/>
 
 </LinearLayout>
