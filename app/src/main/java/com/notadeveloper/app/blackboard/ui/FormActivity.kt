@@ -3,9 +3,14 @@ package com.notadeveloper.app.blackboard.ui
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.widget.AdapterView
+import com.notadeveloper.app.blackboard.MyApplication
 import com.notadeveloper.app.blackboard.R
+import com.notadeveloper.app.blackboard.models.Schedule
 import com.notadeveloper.app.blackboard.ui.adapters.ExpandableListAdapter
 import com.notadeveloper.app.blackboard.ui.adapters.facultylist_adapter
 import com.notadeveloper.app.blackboard.util.RetrofitInterface
@@ -45,7 +50,7 @@ class FormActivity : AppCompatActivity() {
         autocomplete_text_view.visibility = View.GONE
         submit.setOnClickListener {
           val class_id = dept.selectedItem.toString() + "-" + year.selectedItem.toString() + "-" + section.selectedItem.toString()
-          val compositeDisposable: CompositeDisposable = CompositeDisposable()
+          val compositeDisposable = CompositeDisposable()
           val apiService = RetrofitInterface.create()
 
           compositeDisposable.add(
@@ -54,62 +59,10 @@ class FormActivity : AppCompatActivity() {
                   .subscribeOn(Schedulers.io())
                   .subscribe({ result ->
                     Log.e("eg", result.classTimetable.toString())
-                    val mondaylist = ArrayList<String>()
-                    val tuesdaylist = ArrayList<String>()
-                    val wednesdaylist = ArrayList<String>()
-                    val thursdaylist = ArrayList<String>()
-                    val fridaylist = ArrayList<String>()
-                    for (item in result.classTimetable) {
-                      val day1 = item.day
-                      if (day1.equals("Monday"))
-                        mondaylist.add((item.hour).toInt() - 1, item.subjCode)
-                      else if (day1.equals("Tuesday"))
-                        tuesdaylist.add((item.hour).toInt() - 1, item.subjCode)
-                      else if (day1.equals("Wednesday"))
-                        wednesdaylist.add((item.hour).toInt() - 1, item.subjCode)
-                      else if (day1.equals("Thursday"))
-                        thursdaylist.add((item.hour).toInt() - 1, item.subjCode)
-                      else if (day1.equals("Friday"))
-                        fridaylist.add((item.hour).toInt() - 1, item.subjCode)
-                    }
-                    val listDataHeader = ArrayList<String>()
-                    val listDataChild = HashMap<String, List<String>>()
-                    lvExp.visibility = View.VISIBLE
-                    if (mondaylist.isEmpty() == false) {
-                      listDataChild.put("Monday", mondaylist)
-                      listDataHeader.add("Monday")
-                    }
-                    if (tuesdaylist.isEmpty() == false) {
-                      listDataChild.put("Tuesday", tuesdaylist)
-                      listDataHeader.add("Tuesday")
-                    }
-                    if (wednesdaylist.isEmpty() == false) {
-                      listDataChild.put("Wednesday", wednesdaylist)
-                      listDataHeader.add("Wednesday")
-                    }
-                    if (thursdaylist.isEmpty() == false) {
-                      listDataChild.put("Thursday", thursdaylist)
-                      listDataHeader.add("Thursday")
-                    }
-                    if (fridaylist.isEmpty() == false) {
-                      listDataChild.put("Friday", fridaylist)
-                      listDataHeader.add("Friday")
-                    }
-                    if (listDataHeader.isEmpty() == false) {
-                      parent_layout.snack("NO DATA")
-                    }
-                    Log.e("eg", listDataHeader.toString())
-                    Log.e("dhg", listDataChild.toString())
-                    val listAdapter = ExpandableListAdapter(this, listDataHeader, listDataChild)
-
-                    // setting list adapter
-                    lvExp.setAdapter(listAdapter)
                     parent_layout.snack(result.classId + " is at " + result.location)
-//                    val adapter = classtimetable_adapter(result.classTimetable)
-//                    recycler_view.layoutManager = LinearLayoutManager(this)
-//                    recycler_view.adapter = adapter
-//                    form_lin.visibility = View.GONE
-//                    recycler_view.visibility = View.VISIBLE
+                    populateSchedule(result.classTimetable)
+                    recycler_view.layoutManager = LinearLayoutManager(this)
+                    recycler_view.visibility = View.VISIBLE
                   }, { error ->
                     parent_layout.snack("Requested Data not Stored In DB")
                     error.printStackTrace()
@@ -144,47 +97,96 @@ class FormActivity : AppCompatActivity() {
         }
       }
       getString(R.string.my_schedule) -> {
-
-        //TODO New UI
-
-        /*       val curentuserschedule = realm.where(CurrentFacultySchedule::class.java).findAll()
-               val lst: ArrayList<FacultySchedule>? = ArrayList()
-               for (item in curentuserschedule) {
-                 lst?.add(FacultySchedule(item.classId, item.subjCode, item.day, item.hour,
-                     item.classIdLocation))
-               }
-               val adapter = facultytimetable_adapter(lst)
-               recycler_view.layoutManager = LinearLayoutManager(this)
-               recycler_view.adapter = adapter
-               form_lin.visibility = View.GONE
-               recycler_view.visibility = View.VISIBLE
-               */
-
+        val compositeDisposable: CompositeDisposable = CompositeDisposable()
+        val apiService = RetrofitInterface.create()
+        compositeDisposable.add(
+            apiService.getFacultySchedule(MyApplication.getFaculty().facultyId)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe({ result ->
+                  populateSchedule(result)
+                  recycler_view.layoutManager = LinearLayoutManager(this)
+                  form_lin.visibility = View.GONE
+                  recycler_view.visibility = View.VISIBLE
+                }, { error ->
+                  parent_layout.snack("Requested Data not Stored In DB")
+                  error.printStackTrace()
+                })
+        )
 
       }
       getString(R.string.contact_hod_s) -> {
         //TODO New UI
-/*        val currentuserlist = realm.where(CurrentFacultyList::class.java).findAll()
-        val lst: ArrayList<FacultyList>? = ArrayList()
-        for (item in currentuserlist) {
-          lst?.add(FacultyList(item.facultyId, item.name, item.phone, item.dept))
-        }
-        val adapter = facultylist_adapter(lst)
-        recycler_view.layoutManager = LinearLayoutManager(this)
-        recycler_view.adapter = adapter
-        form_lin.visibility = View.GONE
-        recycler_view.visibility = View.VISIBLE*/
-
+        val compositeDisposable = CompositeDisposable()
+        val apiService = RetrofitInterface.create()
+        compositeDisposable.add(
+            apiService.getFacultyList("", "HOD")
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe({ result ->
+                  Log.e("eg", result.toString())
+                  val adapter = facultylist_adapter(result)
+                  recycler_view.layoutManager = LinearLayoutManager(this)
+                  form_lin.visibility = View.GONE
+                  recycler_view.adapter = adapter
+                  recycler_view.visibility = View.VISIBLE
+                }, { error ->
+                  parent_layout.snack("Requested Data not Stored In DB")
+                  error.printStackTrace()
+                })
+        )
 
       }
       getString(R.string.faculty_schedule) -> {
         year.visibility = View.GONE
         section.visibility = View.GONE
-        dept.visibility = View.GONE
         day.visibility = View.GONE
         hour.visibility = View.GONE
         //TODO New UI
-/*
+        val compositeDisposable = CompositeDisposable()
+        val apiService = RetrofitInterface.create()
+        compositeDisposable.add(
+            apiService.getFacultyList("", "")
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe({ result ->
+                  Log.e("eg", result.toString())
+                  val adapter = facultylist_adapter(result)
+                  dept.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                    override fun onNothingSelected(p0: AdapterView<*>?) {
+                      TODO(
+                          "not implemented") //To change body of created functions use File | Settings | File Templates.
+                    }
+
+                    override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                      adapter.getFilter(dept.selectedItem.toString()).filter("")
+                      autocomplete_text_view.setText("")
+                    }
+
+                  }
+                  adapter.getFilter(dept.selectedItem.toString()).filter("")
+                  autocomplete_text_view.addTextChangedListener(object : TextWatcher {
+                    override fun afterTextChanged(p0: Editable?) {
+                      adapter.getFilter(dept.selectedItem.toString()).filter(p0)
+                    }
+
+                    override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                    }
+
+                    override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+                    }
+                  })
+                  recycler_view.layoutManager = LinearLayoutManager(this)
+                  recycler_view.adapter = adapter
+                  recycler_view.visibility = View.VISIBLE
+                }, { error ->
+                  parent_layout.snack("Requested Data not Stored In DB")
+                  error.printStackTrace()
+                })
+        )
+
+        /*
         val facultylist = realm.where(CurrentFacultyList::class.java).findAll()
         val flist: HashMap<String, String> = HashMap()
         for (item in facultylist) {
@@ -221,4 +223,57 @@ class FormActivity : AppCompatActivity() {
     }
   }
 
+  fun populateSchedule(schedule: List<Schedule>) {
+    val mondaylist = Array<String>(8, { "Free Period" })
+    val tuesdaylist = Array<String>(8, { "Free Period" })
+    val wednesdaylist = Array<String>(8, { "Free Period" })
+    val thursdaylist = Array<String>(8, { "Free Period" })
+    val fridaylist = Array<String>(8, { "Free Period" })
+    for (item in schedule) {
+      val day1 = item.day
+      if (day1.equals("Monday"))
+        mondaylist[(item.hour).toInt() - 1] = item.classId + "," + item.subjCode + "," + item.classLocation
+      else if (day1.equals("Tuesday"))
+        tuesdaylist[(item.hour).toInt() - 1] = item.classId + "," + item.subjCode + "," + item.classLocation
+      else if (day1.equals("Wednesday"))
+        wednesdaylist[(item.hour).toInt() - 1] = item.classId + "," + item.subjCode + "," + item.classLocation
+      else if (day1.equals("Thursday"))
+        thursdaylist[(item.hour).toInt() - 1] = item.classId + "," + item.subjCode + "," + item.classLocation
+      else if (day1.equals("Friday"))
+        fridaylist[(item.hour).toInt() - 1] = item.classId + "," + item.subjCode + "," + item.classLocation
+    }
+    val listDataHeader = ArrayList<String>()
+    val listDataChild = HashMap<String, List<String>>()
+    lvExp.visibility = View.VISIBLE
+    if (mondaylist.isEmpty() == false) {
+      listDataChild.put("Monday", mondaylist.toList())
+      listDataHeader.add("Monday")
+    }
+    if (tuesdaylist.isEmpty() == false) {
+      listDataChild.put("Tuesday", tuesdaylist.toList())
+      listDataHeader.add("Tuesday")
+    }
+    if (wednesdaylist.isEmpty() == false) {
+      listDataChild.put("Wednesday", wednesdaylist.toList())
+      listDataHeader.add("Wednesday")
+    }
+    if (thursdaylist.isEmpty() == false) {
+      listDataChild.put("Thursday", thursdaylist.toList())
+      listDataHeader.add("Thursday")
+    }
+    if (fridaylist.isEmpty() == false) {
+      listDataChild.put("Friday", fridaylist.toList())
+      listDataHeader.add("Friday")
+    }
+    if (listDataHeader.isEmpty() == false) {
+      parent_layout.snack("NO DATA")
+    }
+    Log.e("eg", listDataHeader.toString())
+    Log.e("dhg", listDataChild.toString())
+    val listAdapter = ExpandableListAdapter(this, listDataHeader, listDataChild)
+
+    // setting list adapter
+    lvExp.setAdapter(listAdapter)
+
+  }
 }

@@ -38,12 +38,13 @@ class MyApplication : Application() {
           facultyId = preferences.getString("faculty_id", ""),
           name = preferences.getString("name", ""),
           dept = preferences.getString("dept", ""),
-          inchargeOf = preferences.getString("incharge_of", ""),
+          inchargeOf = preferences.getString("incharge_of", null),
           facultyType = preferences.getString("faculty_type", ""),
           email = preferences.getString("email", ""),
           password = preferences.getString("password", ""),
           phone = preferences.getString("phone", ""),
-          responsibilities = ArrayList(),
+          responsibilities = preferences.getStringSet("responsibilities",
+              emptySet<String>()).toList(),
           detail = null
       )
       return faculty
@@ -59,6 +60,7 @@ class MyApplication : Application() {
         putString("email", faculty.email)
         putString("password", faculty.password)
         putString("phone", faculty.phone)
+        putStringSet("responsibilities", faculty.responsibilities.toSet())
         commit()
       }
     }

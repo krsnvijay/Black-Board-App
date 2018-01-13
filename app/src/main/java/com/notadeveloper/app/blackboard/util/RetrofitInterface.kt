@@ -26,7 +26,8 @@ interface RetrofitInterface {
   fun getFaculty(@Path("faculty_id") faculty_id: String): Observable<Faculty>
 
   @GET("faculties/")
-  fun getFacultyList(@Query("dept") dept: String): Observable<List<Faculty>>
+  fun getFacultyList(@Query("dept") dept: String, @Query(
+      "faculty_type") facultyType: String): Observable<List<Faculty>>
 
   @GET("schedules/")
   fun getFacultySchedule(@Query("faculty_id") faculty_id: String): Observable<List<Schedule>>

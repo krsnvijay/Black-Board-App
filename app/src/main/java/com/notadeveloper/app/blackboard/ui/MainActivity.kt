@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity(), OnClickListener {
     setSupportActionBar(toolbar)
 
     val current_faculty = MyApplication.getFaculty()
-    info.text = current_faculty.name + "\n(${current_faculty.facultyType})\nDept-${current_faculty.dept} \nIncharge of:${current_faculty.inchargeOf ?: "None"}"
+    info.text = current_faculty.name + "\n(${current_faculty.facultyType})\nDept-${current_faculty.dept} \nIncharge of:${current_faculty.inchargeOf ?: "None"} \n Responsibilities:${current_faculty.responsibilities}"
     ButtonVisibilty(current_faculty.facultyType)
 
     fab.setOnClickListener { view ->
@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity(), OnClickListener {
 
   fun ButtonVisibilty(faculty_type: String) {
     when (faculty_type) {
-      "PROFESSOR" -> {
+      "Professor" -> {
         contact_hod.visibility = View.GONE
         faculty_schedule.visibility = View.GONE
         available_faculty.visibility = View.GONE
@@ -85,7 +85,7 @@ class MainActivity : AppCompatActivity(), OnClickListener {
         my_schedule.visibility = View.GONE
         contact_hod.visibility = View.GONE
       }
-      "DEAN" -> {
+      "Dean" -> {
         my_schedule.visibility = View.GONE
       }
     }
