@@ -1,28 +1,24 @@
 package com.notadeveloper.app.blackboard.ui
 
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.Color.parseColor
-import com.github.paolorotolo.appintro.AppIntroFragment
 import android.os.Bundle
 import android.support.annotation.Nullable
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import com.github.paolorotolo.appintro.AppIntro
+import com.github.paolorotolo.appintro.AppIntroFragment
+import com.notadeveloper.app.blackboard.MyApplication
 import com.notadeveloper.app.blackboard.R
-import io.realm.Realm
-import kotlin.properties.Delegates
 
 
 /**
  * Created by krsnv on 10/11/2017.
  */
 class IntroActivity : AppIntro() {
-  private var realm: Realm by Delegates.notNull()
+
   override fun onCreate(@Nullable savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    realm = Realm.getDefaultInstance()
-    if (!realm.isEmpty){
+    if (!MyApplication.getFaculty().facultyId.isEmpty()) {
       startActivity(Intent(this,MainActivity::class.java))
       finish()
     }
@@ -49,8 +45,4 @@ class IntroActivity : AppIntro() {
     // Do something when users tap on Done button.
   }
 
-  override fun onDestroy() {
-    super.onDestroy()
-    realm.close()
-  }
 }

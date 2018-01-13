@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.notadeveloper.app.blackboard.R
-import com.notadeveloper.app.blackboard.models.FacultyList
+import com.notadeveloper.app.blackboard.models.Faculty
 
 /**
  * Created by krsnv on 10/11/2017.
@@ -17,7 +17,7 @@ import com.notadeveloper.app.blackboard.models.FacultyList
  * Created by krsnv on 10/10/2017.
  */
 class facultylist_adapter(
-    private val list: List<FacultyList>?) : RecyclerView.Adapter<facultylist_adapter.viewholder>() {
+    private val list: List<Faculty>?) : RecyclerView.Adapter<facultylist_adapter.viewholder>() {
 
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): viewholder {

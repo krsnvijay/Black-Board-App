@@ -9,10 +9,9 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.View.OnClickListener
+import com.notadeveloper.app.blackboard.MyApplication
 import com.notadeveloper.app.blackboard.R
 import com.notadeveloper.app.blackboard.R.layout
-import com.notadeveloper.app.blackboard.models.CurrentFaculty
-import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_main.fab
 import kotlinx.android.synthetic.main.activity_main.toolbar
 import kotlinx.android.synthetic.main.content_main.available_faculty
@@ -22,22 +21,19 @@ import kotlinx.android.synthetic.main.content_main.contact_hod
 import kotlinx.android.synthetic.main.content_main.faculty_schedule
 import kotlinx.android.synthetic.main.content_main.info
 import kotlinx.android.synthetic.main.content_main.my_schedule
-import kotlin.properties.Delegates
 
 class MainActivity : AppCompatActivity(), OnClickListener {
   override fun onClick(p0: View?) {
 
   }
 
-  private var realm: Realm by Delegates.notNull()
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(layout.activity_main)
     setSupportActionBar(toolbar)
-    realm = Realm.getDefaultInstance()
-    val current_faculty = realm.where(CurrentFaculty::class.java).findFirst()!!
-    info.setText(
-        current_faculty.name + "\n(${current_faculty.facultyType})\nDept-${current_faculty.dept} \nIncharge of:${current_faculty.inchargeOf ?: "None"}")
+
+    val current_faculty = MyApplication.getFaculty()
+    info.text = current_faculty.name + "\n(${current_faculty.facultyType})\nDept-${current_faculty.dept} \nIncharge of:${current_faculty.inchargeOf ?: "None"}"
     ButtonVisibilty(current_faculty.facultyType)
 
     fab.setOnClickListener { view ->
@@ -109,22 +105,18 @@ class MainActivity : AppCompatActivity(), OnClickListener {
 
 
     return if (id == R.id.logout) {
-      realm.executeTransaction { realm.deleteAll() }
+      MyApplication.deleteFaculty()
       startActivity(Intent(this, LoginActivity::class.java))
       finish()
       true
-    } else if (id == R.id.about){
-    val builder = AlertDialog.Builder(this)
-    builder.setMessage("Developed by Vijay,Chirag,Chaitanya,Shrushti")
-        .setTitle("Not A Developer")
-    val dialog = builder.create()
+    } else if (id == R.id.about) {
+      val builder = AlertDialog.Builder(this)
+      builder.setMessage("Developed by Vijay,Chirag,Chaitanya,Shrushti")
+          .setTitle("Not A Developer")
+      val dialog = builder.create()
       dialog.show()
-      true}
-    else super.onOptionsItemSelected(item)
+      true
+    } else super.onOptionsItemSelected(item)
   }
 
-  override fun onDestroy() {
-    super.onDestroy()
-    realm.close()
-  }
 }

@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.notadeveloper.app.blackboard.R
-import com.notadeveloper.app.blackboard.models.FacultySchedule
+import com.notadeveloper.app.blackboard.models.Schedule
 
 /**
  * Created by krsnv on 10/11/2017.
@@ -17,7 +17,7 @@ import com.notadeveloper.app.blackboard.models.FacultySchedule
  * Created by krsnv on 10/10/2017.
  */
 class facultytimetable_adapter(
-    private val list: List<FacultySchedule>?) : RecyclerView.Adapter<facultytimetable_adapter.viewholder>() {
+    private val list: List<Schedule>?) : RecyclerView.Adapter<facultytimetable_adapter.viewholder>() {
 
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): viewholder {
@@ -29,8 +29,8 @@ class facultytimetable_adapter(
 
   override fun onBindViewHolder(holder: viewholder, position: Int) {
     val schedule = list?.get(position)
-    holder.tv1.setText(schedule?.day + " hour-" + schedule?.hour + " " + schedule?.classId)
-    holder.tv2.setText(schedule?.subjCode + " " + schedule?.classIdLocation)
+    holder.tv1.text = schedule?.day + " hour-" + schedule?.hour + " " + schedule?.classId
+    holder.tv2.text = schedule?.subjCode + " " + schedule?.classLocation
   }
 
   class viewholder(itemView: View) : RecyclerView.ViewHolder(itemView) {

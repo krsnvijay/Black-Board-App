@@ -1,15 +1,12 @@
 package com.notadeveloper.app.blackboard
 
-import com.squareup.leakcanary.LeakCanary
 import android.app.Application
+import android.content.Context
+import android.content.SharedPreferences
 import android.support.v7.app.AppCompatDelegate
 import com.facebook.stetho.Stetho
-import com.uphyca.stetho_realm.RealmInspectorModulesProvider
-import io.realm.Realm
-import kotlin.properties.Delegates
-import io.realm.RealmConfiguration
-
-
+import com.notadeveloper.app.blackboard.models.Faculty
+import com.squareup.leakcanary.LeakCanary
 
 
 /**
@@ -17,14 +14,9 @@ import io.realm.RealmConfiguration
  */
 class MyApplication : Application() {
 
-
   override fun onCreate() {
     super.onCreate()
-    Realm.init(this);
-    val config = RealmConfiguration.Builder()
-        .deleteRealmIfMigrationNeeded()
-        .build()
-    Realm.setDefaultConfiguration(config)
+    instance = this
     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
     if (LeakCanary.isInAnalyzerProcess(this)) {
       // This process is dedicated to LeakCanary for heap analysis.
@@ -33,14 +25,56 @@ class MyApplication : Application() {
     }
     LeakCanary.install(this)
     Stetho.initializeWithDefaults(this)
-    Stetho.initialize(
-        Stetho.newInitializerBuilder(this)
-            .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
-            .enableWebKitInspector(RealmInspectorModulesProvider.builder(this).build())
-            .build())
+    preferences = getSharedPreferences(
+        "credentials", Context.MODE_PRIVATE)
 
-
-    // Normal app init code...
   }
 
+  companion object {
+    lateinit var instance: MyApplication
+    lateinit var preferences: SharedPreferences
+    fun getFaculty(): Faculty {
+      val faculty = Faculty(
+          facultyId = preferences.getString("faculty_id", ""),
+          name = preferences.getString("name", ""),
+          dept = preferences.getString("dept", ""),
+          inchargeOf = preferences.getString("incharge_of", ""),
+          facultyType = preferences.getString("faculty_type", ""),
+          email = preferences.getString("email", ""),
+          password = preferences.getString("password", ""),
+          phone = preferences.getString("phone", ""),
+          responsibilities = ArrayList(),
+          detail = null
+      )
+      return faculty
+    }
+
+    fun setFaculty(faculty: Faculty) {
+      with(preferences.edit()) {
+        putString("faculty_id", faculty.facultyId)
+        putString("name", faculty.name)
+        putString("dept", faculty.dept)
+        putString("incharge_of", faculty.inchargeOf)
+        putString("faculty_type", faculty.facultyType)
+        putString("email", faculty.email)
+        putString("password", faculty.password)
+        putString("phone", faculty.phone)
+        commit()
+      }
+    }
+
+    fun deleteFaculty() {
+      with(preferences.edit()) {
+        putString("faculty_id", "")
+        putString("name", "")
+        putString("dept", "")
+        putString("incharge_of", "")
+        putString("faculty_type", "")
+        putString("email", "")
+        putString("password", "")
+        putString("phone", "")
+        commit()
+      }
+    }
+  }
 }

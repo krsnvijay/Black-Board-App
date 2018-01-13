@@ -11,39 +11,30 @@ import android.text.TextUtils
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
+import com.notadeveloper.app.blackboard.MyApplication
 import com.notadeveloper.app.blackboard.R
-import com.notadeveloper.app.blackboard.models.CurrentFaculty
-import com.notadeveloper.app.blackboard.models.CurrentFacultyList
-import com.notadeveloper.app.blackboard.models.CurrentFacultySchedule
-import com.notadeveloper.app.blackboard.models.FacultyList
 import com.notadeveloper.app.blackboard.util.RetrofitInterface
 import com.notadeveloper.app.blackboard.util.snack
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import io.realm.Realm
-import io.realm.RealmList
 import kotlinx.android.synthetic.main.activity_login.email
 import kotlinx.android.synthetic.main.activity_login.email_sign_in_button
 import kotlinx.android.synthetic.main.activity_login.login_form
 import kotlinx.android.synthetic.main.activity_login.login_progress
 import kotlinx.android.synthetic.main.activity_login.password
-import kotlin.properties.Delegates
 
 /**
  * A login screen that offers login via ID/password.
  */
 class LoginActivity : AppCompatActivity() {
 
-
-  private var realm: Realm by Delegates.notNull()
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_login)
     // Set up the login form.
-    realm = Realm.getDefaultInstance()
-    if (!realm.isEmpty){
-    startActivity(Intent(this,MainActivity::class.java))
+    if (!MyApplication.getFaculty().facultyId.isEmpty()) {
+      startActivity(Intent(this, MainActivity::class.java))
       finish()
     }
 //    if(user.isValid)
@@ -122,43 +113,7 @@ class LoginActivity : AppCompatActivity() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
             .subscribe({ result ->
-              realm.executeTransaction {
-                // Add a faculty to realm db
-                realm.deleteAll()
-                val faculty = realm.createObject(CurrentFaculty::class.java, result.facultyId)
-                faculty.password = result.password
-                faculty.email = result.email
-                faculty.phone = result.phone
-                faculty.dept = result.dept
-                faculty.name = result.name
-                faculty.facultyType = result.facultyType
-                faculty.inchargeOf = result.inchargeOf
-                for (item in result.facultyList.orEmpty())
-                {
-                  val facultylist=realm.createObject(CurrentFacultyList::class.java)
-                  facultylist.facultyId=item.facultyId
-                  facultylist.phone = item.phone
-                  facultylist.dept = item.dept
-                  facultylist.name = item.name
-
-                }
-                for (item in result.facultySchedule.orEmpty())
-                {
-                  val facultyshedule=realm.createObject(CurrentFacultySchedule::class.java)
-                  facultyshedule.classId=item.classId
-                  facultyshedule.classIdLocation = item.classIdLocation
-                  facultyshedule.day = item.day
-                  facultyshedule.hour = item.hour
-                  facultyshedule.subjCode = item.subjCode
-
-                }
-
-
-
-
-
-              }
-
+              MyApplication.setFaculty(result)
               showProgress(false)
               login_form?.snack("Hello $result Login Sucessful")
               startActivity(Intent(this, MainActivity::class.java))
@@ -207,55 +162,5 @@ class LoginActivity : AppCompatActivity() {
   }
 
 
-  /**
-   * Represents an asynchronous login/registration task used to authenticate
-   * the user.
-   */
-/*  inner class UserLoginTask internal constructor(private val mEmail: String,
-      private val mPassword: String) : AsyncTask<Void, Void, Boolean>() {
-
-    override fun doInBackground(vararg params: Void): Boolean? {
-      // TODO: attempt authentication against a network service.
-
-      try {
-        // Simulate network access.
-        Thread.sleep(2000)
-      } catch (e: InterruptedException) {
-        return false
-      }
-
-      for (credential in DUMMY_CREDENTIALS) {
-        val pieces = credential.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        if (pieces[0] == mEmail) {
-          // Account exists, return true if the password matches.
-          return pieces[1] == mPassword
-        }
-      }
-
-      // TODO: register the new account here.
-      return true
-    }
-
-    override fun onPostExecute(success: Boolean?) {
-      mAuthTask = null
-      showProgress(false)
-
-      if (success!!) {
-        finish()
-      } else {
-        password.error = getString(R.string.error_incorrect_password)
-        password.requestFocus()
-      }
-    }
-
-    override fun onCancelled() {
-      mAuthTask = null
-      showProgress(false)
-    }
-  }*/
-  override fun onDestroy() {
-    super.onDestroy()
-    realm.close()
-  }
 }
 
