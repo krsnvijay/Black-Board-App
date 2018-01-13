@@ -21,6 +21,7 @@ import kotlinx.android.synthetic.main.content_main.contact_hod
 import kotlinx.android.synthetic.main.content_main.faculty_schedule
 import kotlinx.android.synthetic.main.content_main.info
 import kotlinx.android.synthetic.main.content_main.my_schedule
+import kotlinx.android.synthetic.main.content_main.responsibilities
 
 class MainActivity : AppCompatActivity(), OnClickListener {
   override fun onClick(p0: View?) {
@@ -69,6 +70,11 @@ class MainActivity : AppCompatActivity(), OnClickListener {
     available_faculty.setOnClickListener {
       val i = Intent(this, FormActivity::class.java)
       i.putExtra("action_type", available_faculty.text.toString())
+      startActivity(i)
+    }
+    responsibilities.setOnClickListener {
+      val i = Intent(this, FormActivity::class.java)
+      i.putExtra("action_type", responsibilities.text.toString())
       startActivity(i)
     }
 

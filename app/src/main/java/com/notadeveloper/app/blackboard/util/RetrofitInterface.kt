@@ -3,6 +3,7 @@ package com.notadeveloper.app.blackboard.util
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.notadeveloper.app.blackboard.models.ClassTimetable
 import com.notadeveloper.app.blackboard.models.Faculty
+import com.notadeveloper.app.blackboard.models.Responsibility
 import com.notadeveloper.app.blackboard.models.Schedule
 import io.reactivex.Observable
 import okhttp3.OkHttpClient
@@ -38,6 +39,9 @@ interface RetrofitInterface {
   @GET("availability/")
   fun getAvailability(@Query("dept") dept: String, @Query("day") day: String, @Query(
       "hour") hour: String): Observable<List<Faculty>>
+
+  @GET("responsibilities/")
+  fun getResponsibilities(): Observable<List<Responsibility>>
 
   companion object Factory {
     fun create(): RetrofitInterface {

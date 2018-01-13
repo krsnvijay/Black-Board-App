@@ -21,25 +21,25 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_gravity="center"
+        android:orientation="horizontal"
         >
       <ImageView
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          app:srcCompat="@drawable/ic_user"
           android:layout_margin="8dp"
+          app:srcCompat="@drawable/ic_user"
           />
 
     <TextView
+        android:id="@+id/info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Example"
         android:layout_gravity="top"
+        android:layout_margin="8dp"
+        android:text="Example"
         android:textSize="16sp"
         android:textStyle="bold"
-        android:layout_margin="8dp"
-        android:id="@+id/info"
 
         />
     </LinearLayout>
@@ -80,13 +80,19 @@
         android:textColor="@color/colorWhite"
         />
     <Button
+        android:id="@+id/contact_hod"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/contact_hod_s"
-        android:id="@+id/contact_hod"
         android:textColor="@color/colorWhite"
         />
-
+    <Button
+        android:id="@+id/responsibilities"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/responsibilities"
+        android:textColor="@color/colorWhite"
+        />
 
   </LinearLayout>
 

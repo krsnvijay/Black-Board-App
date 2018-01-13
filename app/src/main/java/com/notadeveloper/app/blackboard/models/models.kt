@@ -67,3 +67,14 @@ data class ClassTimetable(
 )
 
 
+data class Responsibility(
+
+    @Json(name = "id")
+    val id: Int,
+    @Json(name = "responsibility_name")
+    val responsibilityName: String,
+    @Json(name = "faculties_responsible")
+    val faculties_responsible: List<String>,
+    @Json(name = "detail")
+    val detail: String?
+)

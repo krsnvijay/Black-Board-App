@@ -12,6 +12,7 @@ import com.notadeveloper.app.blackboard.MyApplication
 import com.notadeveloper.app.blackboard.R
 import com.notadeveloper.app.blackboard.models.Schedule
 import com.notadeveloper.app.blackboard.ui.adapters.ExpandableListAdapter
+import com.notadeveloper.app.blackboard.ui.adapters.Responsibility_Adapter
 import com.notadeveloper.app.blackboard.ui.adapters.facultylist_adapter
 import com.notadeveloper.app.blackboard.util.RetrofitInterface
 import com.notadeveloper.app.blackboard.util.snack
@@ -117,6 +118,7 @@ class FormActivity : AppCompatActivity() {
       }
       getString(R.string.contact_hod_s) -> {
         //TODO New UI
+
         val compositeDisposable = CompositeDisposable()
         val apiService = RetrofitInterface.create()
         compositeDisposable.add(
@@ -128,6 +130,44 @@ class FormActivity : AppCompatActivity() {
                   val adapter = facultylist_adapter(result)
                   recycler_view.layoutManager = LinearLayoutManager(this)
                   form_lin.visibility = View.GONE
+                  recycler_view.adapter = adapter
+                  recycler_view.visibility = View.VISIBLE
+                }, { error ->
+                  parent_layout.snack("Requested Data not Stored In DB")
+                  error.printStackTrace()
+                })
+        )
+
+      }
+      getString(R.string.responsibilities) -> {
+        year.visibility = View.GONE
+        section.visibility = View.GONE
+        day.visibility = View.GONE
+        hour.visibility = View.GONE
+        dept.visibility = View.GONE
+        autocomplete_text_view.hint = "Search Responsibility"
+        val compositeDisposable = CompositeDisposable()
+        val apiService = RetrofitInterface.create()
+        compositeDisposable.add(
+            apiService.getResponsibilities()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe({ result ->
+                  Log.e("eg", result.toString())
+                  val adapter = Responsibility_Adapter(result)
+                  autocomplete_text_view.addTextChangedListener(object : TextWatcher {
+                    override fun afterTextChanged(p0: Editable?) {
+                      adapter.getFilter().filter(p0)
+                    }
+
+                    override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                    }
+
+                    override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+                    }
+                  })
+                  recycler_view.layoutManager = LinearLayoutManager(this)
                   recycler_view.adapter = adapter
                   recycler_view.visibility = View.VISIBLE
                 }, { error ->
@@ -186,39 +226,6 @@ class FormActivity : AppCompatActivity() {
                 })
         )
 
-        /*
-        val facultylist = realm.where(CurrentFacultyList::class.java).findAll()
-        val flist: HashMap<String, String> = HashMap()
-        for (item in facultylist) {
-          flist[item.name] = item.facultyId
-
-        }
-        val adapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
-            ArrayList(flist.keys))
-        autocomplete_text_view.setAdapter(adapter)
-        submit.setOnClickListener {
-          val name = autocomplete_text_view.text.toString()
-          if (!name.isEmpty() && flist.contains(name)) {
-            val compositeDisposable: CompositeDisposable = CompositeDisposable()
-            val apiService = RetrofitInterface.create()
-            val id = flist.get(name) ?: ""
-            compositeDisposable.add(
-                apiService.getFacultySchedule(id)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeOn(Schedulers.io())
-                    .subscribe({ result ->
-                      val adapter2 = facultytimetable_adapter(result)
-                      recycler_view.layoutManager = LinearLayoutManager(this)
-                      recycler_view.adapter = adapter2
-                      form_lin.visibility = View.GONE
-                      recycler_view.visibility = View.VISIBLE
-                    }, { error ->
-                      parent_layout.snack("Requested Data not Stored In DB")
-                      error.printStackTrace()
-                    })
-            )
-          }
-        }*/
       }
     }
   }

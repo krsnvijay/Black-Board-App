@@ -108,6 +108,7 @@
   <string name="my_schedule">My Schedule</string>
   <string name="class_timetable">Class TimeTable</string>
   <string name="class_location">Class Location</string>
+  <string name="responsibilities">Responsibilities</string>
   <string-array name="day">
     <item>Monday</item>
     <item>Tuesday</item>
