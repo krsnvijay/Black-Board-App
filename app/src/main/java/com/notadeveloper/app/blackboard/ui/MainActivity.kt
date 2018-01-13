@@ -1,9 +1,9 @@
 package com.notadeveloper.app.blackboard.ui
 
 import android.app.AlertDialog
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
@@ -22,6 +22,8 @@ import kotlinx.android.synthetic.main.content_main.faculty_schedule
 import kotlinx.android.synthetic.main.content_main.info
 import kotlinx.android.synthetic.main.content_main.my_schedule
 import kotlinx.android.synthetic.main.content_main.responsibilities
+import java.util.Calendar
+
 
 class MainActivity : AppCompatActivity(), OnClickListener {
   override fun onClick(p0: View?) {
@@ -38,9 +40,13 @@ class MainActivity : AppCompatActivity(), OnClickListener {
     ButtonVisibilty(current_faculty.facultyType)
 
     fab.setOnClickListener { view ->
-      Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-          .setAction("Action", null)
-          .show()
+      val c = Calendar.getInstance()
+
+      val datePickerDialog = DatePickerDialog(this, null, c.get(Calendar.YEAR),
+          c.get(Calendar.MONTH),
+          c.get(Calendar.DAY_OF_MONTH))
+      datePickerDialog.show()
+
     }
     class_location.setOnClickListener {
       val i = Intent(this, FormActivity::class.java)
@@ -117,7 +123,8 @@ class MainActivity : AppCompatActivity(), OnClickListener {
       true
     } else if (id == R.id.about) {
       val builder = AlertDialog.Builder(this)
-      builder.setMessage("Developed by Vijay,Chirag,Chaitanya,Shrushti")
+      builder.setMessage(
+          "Developed by:\nVijay and Chirag, dept of CSE\n\nUnder the guidance of:\nMrudula Orungati A.P")
           .setTitle("Not A Developer")
       val dialog = builder.create()
       dialog.show()

@@ -61,7 +61,7 @@ class FormActivity : AppCompatActivity() {
                   .subscribe({ result ->
                     Log.e("eg", result.classTimetable.toString())
                     parent_layout.snack(result.classId + " is at " + result.location)
-                    populateSchedule(result.classTimetable)
+                    populateSchedule(result.classTimetable, true)
                     recycler_view.layoutManager = LinearLayoutManager(this)
                     recycler_view.visibility = View.VISIBLE
                   }, { error ->
@@ -230,7 +230,7 @@ class FormActivity : AppCompatActivity() {
     }
   }
 
-  fun populateSchedule(schedule: List<Schedule>) {
+  fun populateSchedule(schedule: List<Schedule>, classtimetable: Boolean = false) {
     val mondaylist = Array<String>(8, { "Free Period" })
     val tuesdaylist = Array<String>(8, { "Free Period" })
     val wednesdaylist = Array<String>(8, { "Free Period" })
@@ -238,16 +238,19 @@ class FormActivity : AppCompatActivity() {
     val fridaylist = Array<String>(8, { "Free Period" })
     for (item in schedule) {
       val day1 = item.day
+      var dispString = item.classId + "," + item.subjCode + "," + item.classLocation
+      if (classtimetable) dispString += "\n" + item.facultyName
+
       if (day1.equals("Monday"))
-        mondaylist[(item.hour).toInt() - 1] = item.classId + "," + item.subjCode + "," + item.classLocation
+        mondaylist[(item.hour).toInt() - 1] = dispString
       else if (day1.equals("Tuesday"))
-        tuesdaylist[(item.hour).toInt() - 1] = item.classId + "," + item.subjCode + "," + item.classLocation
+        tuesdaylist[(item.hour).toInt() - 1] = dispString
       else if (day1.equals("Wednesday"))
-        wednesdaylist[(item.hour).toInt() - 1] = item.classId + "," + item.subjCode + "," + item.classLocation
+        wednesdaylist[(item.hour).toInt() - 1] = dispString
       else if (day1.equals("Thursday"))
-        thursdaylist[(item.hour).toInt() - 1] = item.classId + "," + item.subjCode + "," + item.classLocation
+        thursdaylist[(item.hour).toInt() - 1] = dispString
       else if (day1.equals("Friday"))
-        fridaylist[(item.hour).toInt() - 1] = item.classId + "," + item.subjCode + "," + item.classLocation
+        fridaylist[(item.hour).toInt() - 1] = dispString
     }
     val listDataHeader = ArrayList<String>()
     val listDataChild = HashMap<String, List<String>>()
@@ -272,7 +275,7 @@ class FormActivity : AppCompatActivity() {
       listDataChild.put("Friday", fridaylist.toList())
       listDataHeader.add("Friday")
     }
-    if (listDataHeader.isEmpty() == false) {
+    if (listDataHeader.isEmpty()) {
       parent_layout.snack("NO DATA")
     }
     Log.e("eg", listDataHeader.toString())

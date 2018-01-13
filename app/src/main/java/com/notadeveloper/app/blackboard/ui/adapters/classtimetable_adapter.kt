@@ -26,7 +26,7 @@ class classtimetable_adapter(
   override fun onBindViewHolder(holder: viewholder, position: Int) {
     val schedule = list?.get(position)
     holder.tv1.text = schedule?.day + " hour-" + schedule?.hour
-    holder.tv2.text = schedule?.subjCode + " " + schedule?.facultyId
+    holder.tv2.text = schedule?.subjCode + " " + schedule?.facultyName
   }
 
   class viewholder(itemView: View) : RecyclerView.ViewHolder(itemView) {

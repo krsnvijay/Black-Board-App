@@ -104,7 +104,7 @@ class facultylist_adapter(
                   listDataChild.put("Friday", fridaylist.toList())
                   listDataHeader.add("Friday")
                 }
-                if (listDataHeader.isEmpty() == false) {
+                if (listDataHeader.isEmpty()) {
                   Toast.makeText(context, "No Data", Toast.LENGTH_SHORT).show()
                 }
                 Log.e("eg", listDataHeader.toString())

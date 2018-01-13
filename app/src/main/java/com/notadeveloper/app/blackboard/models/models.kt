@@ -6,8 +6,8 @@ import com.squareup.moshi.Json
  * Created by krsnv on 10/10/2017.
  */
 data class Schedule(
-    @Json(name = "faculty_id")
-    val facultyId: String,
+    @Json(name = "faculty_name")
+    val facultyName: String,
     @Json(name = "class_id")
     val classId: String,
     @Json(name = "class_location")
