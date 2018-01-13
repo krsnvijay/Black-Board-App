@@ -6,7 +6,6 @@ import android.content.SharedPreferences
 import android.support.v7.app.AppCompatDelegate
 import com.facebook.stetho.Stetho
 import com.notadeveloper.app.blackboard.models.Faculty
-import com.squareup.leakcanary.LeakCanary
 
 
 /**
@@ -18,12 +17,6 @@ class MyApplication : Application() {
     super.onCreate()
     instance = this
     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-    if (LeakCanary.isInAnalyzerProcess(this)) {
-      // This process is dedicated to LeakCanary for heap analysis.
-      // You should not init your app in this process.
-      return
-    }
-    LeakCanary.install(this)
     Stetho.initializeWithDefaults(this)
     preferences = getSharedPreferences(
         "credentials", Context.MODE_PRIVATE)
