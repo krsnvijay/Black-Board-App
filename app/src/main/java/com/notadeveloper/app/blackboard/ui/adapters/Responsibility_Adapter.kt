@@ -5,12 +5,12 @@ package com.notadeveloper.app.blackboard.ui.adapters
  */
 
 
+import android.app.Dialog
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Filter
-import android.widget.TextView
+import android.widget.*
 import com.notadeveloper.app.blackboard.R
 import com.notadeveloper.app.blackboard.models.Responsibility
 
@@ -41,16 +41,39 @@ class Responsibility_Adapter(
   override fun onBindViewHolder(holder: viewholder, position: Int) {
     val responsibility = mFilteredList.get(position)
     holder.tv1.text = responsibility.responsibilityName
+    holder.icon_phone.visibility = View.GONE
+    holder.icon.visibility = View.GONE
+    holder.tv2.visibility = View.GONE
     holder.tv2.text = responsibility.faculties_responsible.toString()
+    holder.container_responsibility.setOnClickListener{
+      val dialog: Dialog
+      dialog = Dialog(holder.tv1.context);
+      dialog.setContentView(R.layout.faculty_dialog)
+      val header: TextView
+      header = dialog.findViewById(R.id.header)
+      val list_view: ListView
+      list_view = dialog.findViewById(R.id.list_view)
+      header.text = responsibility.responsibilityName
+      val adapter = ArrayAdapter(holder.tv1.context,
+              android.R.layout.simple_list_item_1, responsibility.faculties_responsible)
+      list_view.setAdapter(adapter)
+      dialog.show()
+    }
   }
 
   class viewholder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val tv1: TextView
     val tv2: TextView
+    val icon: ImageView
+    val icon_phone: ImageView
+    val container_responsibility: RelativeLayout
 
     init {
       tv1 = itemView.findViewById(R.id.text1)
       tv2 = itemView.findViewById(R.id.text2)
+      icon = itemView.findViewById(R.id.icon)
+      icon_phone = itemView.findViewById(R.id.icon_phone)
+      container_responsibility = itemView.findViewById(R.id.container_responsibility)
     }
   }
 

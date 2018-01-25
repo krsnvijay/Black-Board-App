@@ -19,10 +19,7 @@ import com.notadeveloper.app.blackboard.util.snack
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_form.form_lin
-import kotlinx.android.synthetic.main.activity_form.lvExp
-import kotlinx.android.synthetic.main.activity_form.parent_layout
-import kotlinx.android.synthetic.main.activity_form.recycler_view
+import kotlinx.android.synthetic.main.activity_form.*
 import kotlinx.android.synthetic.main.form_layout.autocomplete_text_view
 import kotlinx.android.synthetic.main.form_layout.day
 import kotlinx.android.synthetic.main.form_layout.dept
@@ -45,7 +42,7 @@ class FormActivity : AppCompatActivity() {
 
   fun UIchange(actiontype: String) {
     when (actiontype) {
-      getString(R.string.class_location), getString(R.string.class_timetable) -> {
+       getString(R.string.class_timetable) -> {
         day.visibility = View.GONE
         hour.visibility = View.GONE
         autocomplete_text_view.visibility = View.GONE
@@ -70,6 +67,35 @@ class FormActivity : AppCompatActivity() {
                   })
           )
         }
+      }
+      getString(R.string.class_location)->
+      {
+          day.visibility = View.GONE
+          hour.visibility = View.GONE
+          recycler_view.visibility = View.GONE
+          autocomplete_text_view.visibility = View.GONE
+          submit.setOnClickListener {
+              val class_id = dept.selectedItem.toString() + "-" + year.selectedItem.toString() + "-" + section.selectedItem.toString()
+              val compositeDisposable = CompositeDisposable()
+              val apiService = RetrofitInterface.create()
+
+              compositeDisposable.add(
+                      apiService.getClass(class_id)
+                              .observeOn(AndroidSchedulers.mainThread())
+                              .subscribeOn(Schedulers.io())
+                              .subscribe({ result ->
+//                                  Log.e("eg", result.classTimetable.toString())
+//                                  parent_layout.snack(result.classId + " is at " + result.location)
+//                                  populateSchedule(result.classTimetable, true)
+//                                  recycler_view.layoutManager = LinearLayoutManager(this)
+                                  location_card.visibility = View.VISIBLE
+                                  location_text.text = "Class "+result.classId+" is located at "+result.location
+                              }, { error ->
+                                  parent_layout.snack("Requested Data not Stored In DB")
+                                  error.printStackTrace()
+                              })
+              )
+          }
       }
       getString(R.string.available_faculty) -> {
         year.visibility = View.GONE
@@ -98,6 +124,8 @@ class FormActivity : AppCompatActivity() {
         }
       }
       getString(R.string.my_schedule) -> {
+          submit.visibility = View.GONE
+          form_lin.visibility = View.GONE
         val compositeDisposable: CompositeDisposable = CompositeDisposable()
         val apiService = RetrofitInterface.create()
         compositeDisposable.add(
@@ -107,7 +135,7 @@ class FormActivity : AppCompatActivity() {
                 .subscribe({ result ->
                   populateSchedule(result)
                   recycler_view.layoutManager = LinearLayoutManager(this)
-                  form_lin.visibility = View.GONE
+
                   recycler_view.visibility = View.VISIBLE
                 }, { error ->
                   parent_layout.snack("Requested Data not Stored In DB")
@@ -145,6 +173,7 @@ class FormActivity : AppCompatActivity() {
         day.visibility = View.GONE
         hour.visibility = View.GONE
         dept.visibility = View.GONE
+          submit.visibility = View.GONE
         autocomplete_text_view.hint = "Search Responsibility"
         val compositeDisposable = CompositeDisposable()
         val apiService = RetrofitInterface.create()

@@ -45,8 +45,8 @@ class facultylist_adapter(
 
   override fun onBindViewHolder(holder: viewholder, position: Int) {
     val faculty = mFilteredList.get(position)
-    holder.tv1.text = faculty.name + " " + faculty.facultyId
-    holder.tv2.text = faculty.dept + " " + faculty.phone
+    holder.tv1.text = faculty.name + "("+ faculty.dept+")"
+    holder.tv2.text = faculty.phone
     holder.tv1.setOnClickListener {
       val compositeDisposable = CompositeDisposable()
       val apiService = RetrofitInterface.create()
@@ -57,7 +57,7 @@ class facultylist_adapter(
               .subscribe({ result ->
                 Log.e("eg", result.toString())
                 val builder = AlertDialog.Builder(context)
-                val inflater = LayoutInflater.from(context).inflate(R.layout.dialog_schedule, null)
+                val inflater = LayoutInflater.from(context).inflate(R.layout.dialog_schedule,null)
                 builder.setView(inflater)
                 builder.setTitle("Schedule")
 // 3. Get the AlertDialog from create()
