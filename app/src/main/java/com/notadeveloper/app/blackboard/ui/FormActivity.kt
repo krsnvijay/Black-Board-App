@@ -1,6 +1,14 @@
 package com.notadeveloper.app.blackboard.ui
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.annotation.TargetApi
+import android.app.Activity
+import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.text.Editable
@@ -8,6 +16,7 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
+import android.widget.Toast
 import com.notadeveloper.app.blackboard.MyApplication
 import com.notadeveloper.app.blackboard.R
 import com.notadeveloper.app.blackboard.models.Schedule
@@ -20,6 +29,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_form.*
+import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.form_layout.autocomplete_text_view
 import kotlinx.android.synthetic.main.form_layout.day
 import kotlinx.android.synthetic.main.form_layout.dept
@@ -50,6 +60,7 @@ class FormActivity : AppCompatActivity() {
           val class_id = dept.selectedItem.toString() + "-" + year.selectedItem.toString() + "-" + section.selectedItem.toString()
           val compositeDisposable = CompositeDisposable()
           val apiService = RetrofitInterface.create()
+            showProgress(true,recycler_view)
 
           compositeDisposable.add(
               apiService.getClass(class_id)
@@ -57,11 +68,13 @@ class FormActivity : AppCompatActivity() {
                   .subscribeOn(Schedulers.io())
                   .subscribe({ result ->
                     Log.e("eg", result.classTimetable.toString())
+                      showProgress(false,recycler_view)
                     parent_layout.snack(result.classId + " is at " + result.location)
                     populateSchedule(result.classTimetable, true)
                     recycler_view.layoutManager = LinearLayoutManager(this)
                     recycler_view.visibility = View.VISIBLE
                   }, { error ->
+                      showProgress(false,recycler_view)
                     parent_layout.snack("Requested Data not Stored In DB")
                     error.printStackTrace()
                   })
@@ -75,6 +88,7 @@ class FormActivity : AppCompatActivity() {
           recycler_view.visibility = View.GONE
           autocomplete_text_view.visibility = View.GONE
           submit.setOnClickListener {
+              showProgress(true,location_card)
               val class_id = dept.selectedItem.toString() + "-" + year.selectedItem.toString() + "-" + section.selectedItem.toString()
               val compositeDisposable = CompositeDisposable()
               val apiService = RetrofitInterface.create()
@@ -88,10 +102,11 @@ class FormActivity : AppCompatActivity() {
 //                                  parent_layout.snack(result.classId + " is at " + result.location)
 //                                  populateSchedule(result.classTimetable, true)
 //                                  recycler_view.layoutManager = LinearLayoutManager(this)
-                                  location_card.visibility = View.VISIBLE
+                                  showProgress(false,location_card)
                                   location_text.text = "Class "+result.classId+" is located at "+result.location
                               }, { error ->
-                                  parent_layout.snack("Requested Data not Stored In DB")
+                                  showProgress(false,location_card)
+                                  location_text.text = "Requested Data not stored in Data Base"
                                   error.printStackTrace()
                               })
               )
@@ -102,6 +117,7 @@ class FormActivity : AppCompatActivity() {
         section.visibility = View.GONE
         autocomplete_text_view.visibility = View.GONE
         submit.setOnClickListener {
+            showProgress(true, recycler_view)
           val compositeDisposable: CompositeDisposable = CompositeDisposable()
           val apiService = RetrofitInterface.create()
           compositeDisposable.add(
@@ -110,6 +126,7 @@ class FormActivity : AppCompatActivity() {
                   .observeOn(AndroidSchedulers.mainThread())
                   .subscribeOn(Schedulers.io())
                   .subscribe({ result ->
+                      showProgress(false , recycler_view)
                     Log.e("eg", result.toString())
                     val adapter = facultylist_adapter(result)
                     recycler_view.layoutManager = LinearLayoutManager(this)
@@ -117,6 +134,7 @@ class FormActivity : AppCompatActivity() {
                     form_lin.visibility = View.GONE
                     recycler_view.visibility = View.VISIBLE
                   }, { error ->
+                      showProgress(false, recycler_view)
                     parent_layout.snack("Requested Data not Stored In DB")
                     error.printStackTrace()
                   })
@@ -145,8 +163,13 @@ class FormActivity : AppCompatActivity() {
 
       }
       getString(R.string.contact_hod_s) -> {
+          if(ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CALL_PHONE)!=
+                  PackageManager.PERMISSION_GRANTED){
+              Toast.makeText(this,"Please grant the required permission!", Toast.LENGTH_SHORT).show()
+              ActivityCompat.requestPermissions(this as Activity, arrayOf(android.Manifest.permission.CALL_PHONE),1)
+          }
         //TODO New UI
-
+        form_lin.visibility = View.GONE
         val compositeDisposable = CompositeDisposable()
         val apiService = RetrofitInterface.create()
         compositeDisposable.add(
@@ -207,10 +230,12 @@ class FormActivity : AppCompatActivity() {
 
       }
       getString(R.string.faculty_schedule) -> {
+          showProgress(true, recycler_view)
         year.visibility = View.GONE
         section.visibility = View.GONE
         day.visibility = View.GONE
         hour.visibility = View.GONE
+          submit.visibility = View.GONE
         //TODO New UI
         val compositeDisposable = CompositeDisposable()
         val apiService = RetrofitInterface.create()
@@ -219,6 +244,7 @@ class FormActivity : AppCompatActivity() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe({ result ->
+                    showProgress(false, recycler_view)
                   Log.e("eg", result.toString())
                   val adapter = facultylist_adapter(result)
                   dept.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -250,6 +276,7 @@ class FormActivity : AppCompatActivity() {
                   recycler_view.adapter = adapter
                   recycler_view.visibility = View.VISIBLE
                 }, { error ->
+                    showProgress(false, recycler_view)
                   parent_layout.snack("Requested Data not Stored In DB")
                   error.printStackTrace()
                 })
@@ -258,6 +285,19 @@ class FormActivity : AppCompatActivity() {
       }
     }
   }
+    override fun onRequestPermissionsResult(requestCode: Int,
+                                            permissions: Array<String>, grantResults: IntArray) {
+        when (requestCode) {
+            1 -> {
+
+                if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "Cannot call unless you grant permission!", Toast.LENGTH_LONG).show()
+
+                } else {
+                }
+            }
+        }
+    }
 
   fun populateSchedule(schedule: List<Schedule>, classtimetable: Boolean = false) {
     val mondaylist = Array<String>(8, { "Free Period" })
@@ -315,4 +355,34 @@ class FormActivity : AppCompatActivity() {
     lvExp.setAdapter(listAdapter)
 
   }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2) private fun showProgress(show: Boolean, view: View) {
+        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
+        // for very easy animations. If available, use these APIs to fade-in
+        // the progress spinner.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            val shortAnimTime = resources.getInteger(android.R.integer.config_shortAnimTime)
+
+            view.visibility = if (show) View.GONE else View.VISIBLE
+            view.animate().setDuration(shortAnimTime.toLong()).alpha(
+                    (if (show) 0 else 1).toFloat()).setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    view.visibility = if (show) View.GONE else View.VISIBLE
+                }
+            })
+
+            login_progress_form.visibility = if (show) View.VISIBLE else View.GONE
+            login_progress_form.animate().setDuration(shortAnimTime.toLong()).alpha(
+                    (if (show) 1 else 0).toFloat()).setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    login_progress_form.visibility = if (show) View.VISIBLE else View.GONE
+                }
+            })
+        } else {
+            // The ViewPropertyAnimator APIs are not available, so simply show
+            // and hide the relevant UI components.
+            login_progress_form.visibility = if (show) View.VISIBLE else View.GONE
+            view.visibility = if (show) View.GONE else View.VISIBLE
+        }
+    }
 }
